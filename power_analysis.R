@@ -5,11 +5,11 @@ auc_from_accuracy <- function(acc, ncases, ncontrols, incorrectcontrib) {
   n = ncases + ncontrols
   ncorrect = acc * n
   
-  min_sens_n = min_sens(ncorrect, ncases, ncontrols, incorrectcontrib)
+  nmin_sens = min_sens(ncorrect, ncases, ncontrols, incorrectcontrib)
   
-  min_spec_n = min_spec(ncorrect, ncases, ncontrols, incorrectcontrib)
+  nmin_spec = min_spec(ncorrect, ncases, ncontrols, incorrectcontrib)
   
-  list(sens=min_sens_n, spec=min_spec_n)
+  list(sens=nmin_sens, spec=nmin_spec)
 }
 
 
