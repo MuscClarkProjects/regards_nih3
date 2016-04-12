@@ -1,18 +1,32 @@
-auc_from_accuracy <- function(acc, ncases, ncontrols) {
+library(pROC)
+
+auc_from_accuracy <- function(acc, ncases, ncontrols, incorrectcontrib) {
+  
   n = ncases + ncontrols
   ncorrect = acc * n
   
-  min_sens_n = min_sens(ncorrect, ncases, ncontrols)
+  min_sens_n = min_sens(ncorrect, ncases, ncontrols, incorrectcontrib)
   
-  min_spec_n = min_spec(ncorrect, ncases, ncontrols)
+  min_spec_n = min_spec(ncorrect, ncases, ncontrols, incorrectcontrib)
   
   list(sens=min_sens_n, spec=min_spec_n)
 }
 
-min_sens <- function(ncorrect, ncases, ncontrols) {
+
+min_sens <- function(ncorrect, ncases, ncontrols, incorrectcontrib) {
   
-  ncorrect_controls = min(ncontrols, ncorrect)
-  ncorrect_cases = max(ncorrect-ncontrols, 0)
+  n = ncases + ncontrols
+  nincorrect = n - ncorrect
+  
+  nincorrect_cases = min(nincorrect * incorrectcontrib, ncases)
+  nincorrect_controls = min(nincorrect - nincorrect_cases, ncontrols)
+  
+  ncorrect_cases = ncases - nincorrect_cases
+  ncorrect_controls = ncontrols - nincorrect_controls
+  
+  
+  print(paste('ncorrect_controls:', ncorrect_controls))
+  print(paste('ncorrect_cases:', ncorrect_cases))
   
   auc = ncorrect_cases/ncases #square wave
   
@@ -20,6 +34,6 @@ min_sens <- function(ncorrect, ncases, ncontrols) {
 }
 
 
-min_spec <- function(ncorrect, ncases, ncontrols) {
-  min_sens(ncorrect, ncontrols, ncases)
+min_spec <- function(ncorrect, ncases, ncontrols, incorrectcontrib) {
+  min_sens(ncorrect, ncontrols, ncases, incorrectcontrib)
 }
